@@ -1,5 +1,5 @@
 """
-ASGI config for UselessSite project.
+ASGI config for mysite project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
