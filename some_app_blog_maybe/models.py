@@ -1,17 +1,21 @@
-# -*- coding: utf-8 -*-
 from django.utils import timezone
 from django.db import models
 from django.urls import reverse
 
-# Create your models here.
+class Product(models.Model):
+    title = models.CharField(max_length=256, blank=False, verbose_name="Product Title")
+    price = models.IntegerField(blank=False, default=0, verbose_name="Product Price")
+
+
 class Category(models.Model):
-    category = models.CharField(u'Категорія', max_length=250, help_text=u'Максимум 250 символів')
-    slug = models.SlugField(u'Слаг', unique=True)  # Додано унікальність для slug
-    objects = models.Manager()  # Менеджер моделі
+    category = models.CharField('Категорія', max_length=250, help_text='Максимум 250 символів')
+    slug = models.SlugField('Слаг', unique=True)
+
+    objects = models.Manager()
 
     class Meta:
-        verbose_name = u'Категорія для публікації'
-        verbose_name_plural = u'Категорії для публікацій'
+        verbose_name = 'Категорія для публікації'
+        verbose_name_plural = 'Категорії для публікацій'
 
     def __str__(self):
         return self.category
@@ -19,26 +23,19 @@ class Category(models.Model):
     def get_absolute_url(self):
         try:
             url = reverse('articles-category-list', kwargs={'slug': self.slug})
-        except Exception as e:
-            print(f"Error in get_absolute_url: {e}")  # Додано виведення помилок
+        except Exception:
             url = "/"
         return url
 
 
 class Article(models.Model):
-    title = models.CharField('Заголовок', max_length=250,
-                             help_text='Максимум 250 символів')
+    title = models.CharField('Заголовок', max_length=250, help_text='Максимум 250 символів')
     description = models.TextField(blank=True, verbose_name='Опис')
     pub_date = models.DateTimeField('Дата публікації', default=timezone.now)
     slug = models.SlugField('Слаг', unique_for_date='pub_date')
-    main_page = models.BooleanField('Головна', default=False,
-                                     help_text='Показувати')
-    category = models.ForeignKey(Category,
-                                 related_name='news',
-                                 blank=True,
-                                 null=True,
-                                 verbose_name='Категорія',
-                                 on_delete=models.CASCADE)
+    main_page = models.BooleanField('Головна', default=False, help_text='Показувати на головній сторінці')
+
+    category = models.ForeignKey(Category, related_name='articles', blank=True, null=True, verbose_name='Категорія', on_delete=models.CASCADE)
 
     objects = models.Manager()
 
@@ -64,13 +61,9 @@ class Article(models.Model):
 
 
 class ArticleImage(models.Model):
-    article = models.ForeignKey(Article,
-                                 verbose_name='Стаття',
-                                 related_name='images',
-                                 on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, verbose_name='Стаття', related_name='images', on_delete=models.CASCADE)
     image = models.ImageField('Фото', upload_to='photos')
-    title = models.CharField('Заголовок', max_length=250,
-                             help_text='Максимум 250 символів', blank=True)
+    title = models.CharField('Заголовок', max_length=250, help_text='Максимум 250 символів', blank=True)
 
     class Meta:
         verbose_name = 'Фото для статті'

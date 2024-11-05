@@ -1,3 +1,4 @@
+# app_blog/tests_urls.py
 from django.test import TestCase
 from django.urls import reverse, resolve
 from .views import HomePageView, ArticleList, ArticleDetail, ArticleCategoryList
@@ -26,3 +27,7 @@ class UrlsTests(TestCase):
         self.assertEqual(url, '/articles/category/category-slug/')
         view = resolve(url)
         self.assertEqual(view.func.view_class, ArticleCategoryList)
+
+
+
+
